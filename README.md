@@ -9,11 +9,8 @@ Environments:
 - multiple cache nodes for HA
 
 
-TODO list:
+![](./images/golang-groupcache.jpg)
 
-- [x] write custom database for test
-- [x] write cache server to provide API for caller outside
-- [ ] write outside tester
 
 **groupcache version**
 

@@ -87,6 +87,8 @@ func cacheGetFunc(ctx context.Context, key string, dest groupcache.Sink) error {
 	if err != nil {
 		panic(err)
 	}
+
+	// :9000 is our slow database
 	resp, err := http.Post("http://localhost:9000/get", "application/json", bytes.NewReader(data))
 	if err != nil {
 		panic(err)
