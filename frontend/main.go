@@ -2,10 +2,12 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"flag"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/golang/groupcache"
@@ -47,7 +49,9 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var ctx groupcache.Context
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
 	var data []byte
 	if err := cache.Get(ctx, req.Key, groupcache.AllocatingByteSliceSink(&data)); err != nil {
 		WriteJSON(w, http.StatusBadRequest, newResponse("fail", err.Error()))
@@ -76,7 +80,7 @@ func main() {
 	log.Panic(http.ListenAndServe(*port, nil))
 }
 
-func cacheGetFunc(ctx groupcache.Context, key string, dest groupcache.Sink) error {
+func cacheGetFunc(ctx context.Context, key string, dest groupcache.Sink) error {
 	log.Infof("asking for key: %s", key)
 	req := request{Key: key}
 	data, err := json.Marshal(req)
